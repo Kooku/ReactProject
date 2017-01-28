@@ -1,96 +1,69 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-var AddNew = React.createClass({
-  render: function () {
-    var addNewStyle = {
-      position: "relative",
-      marginBottom: 15
-    }
-    var buttonStyle = {
-      display: "inline-block",
-      marginRight: 10
+var TodoList = React.createClass({
+  getInitialState: function() {
+    return {
+      items: []
     };
-    var textStyle = {
-      display: "inline-block"
-    };
-    return (
-      <div style={addNewStyle}>
-        <input type="button" style={buttonStyle} value="Add New" />
-        <input className="newTask" type="text" style={textStyle} />
-      </div>
-    )
-  }
-});
+  },
+  
+  addItem: function(e) {
+    var itemArray = this.state.items;
 
-var Item = React.createClass({
-  render: function () {
-    var itemStyle = {
-      color: "#f56262",
-      fontSize: 16,
-      position: "relative",
-      marginTop: 10
-    };
-    return (
-      <div style={itemStyle}>{this.props.name}</div>
-    )
-  }
-});
+    itemArray.push(
+      {
+        text: this._inputElement.value,
+        key: Date.now()
+      }
+    );
 
-var Title = React.createClass({
-  render: function () {
-    var titleStyle = {
-      position: "relative",
-      padding: "20px 15px",
-      color: "#333",
-      fontSize: 32,
-      fontWeight: "bold",
-      fontFamily: "Helvetica, Arial, sans-serif"
-    };
-    return (
-      <div style={titleStyle}> To Do List </div>
-    )
-  }
-});
-
-var Form = React.createClass({
-  render: function () {
-    var nameList = this.props.names.map(function(name) {
-      return <Item name={name} />;
+    this.setState({
+      items: itemArray
     });
-    var formStyle = {
-      position: "relative",
-      padding: "15px 20px 20px 20px",
-      border: "5px solid #90de96",
-      borderRadius: 5      
-    };
+
+    this._inputElement.value = "";
+    e.preventDefault();
+  },
+
+  remove: function() {
+    console.log("removing")
+  },
+
+  render: function() {
     return (
-      <div style={formStyle}>
-        <AddNew />
-        {nameList}
+      <div className="todoListMain">
+        <div className="title">
+          <form onSubmit={this.addItem}>
+            <input ref={ (a) => this._inputElement = a} 
+              placeholder="Enter task">
+            </input>
+            <button type="submit">add</button>
+          </form>
+        </div>
+        <TodoItems entries={this.state.items} />
       </div>
-    )
+    );
   }
 });
 
-var TodoContainer = React.createClass({
-  render: function () {
-    var containerStyle = {
-      margin: "auto",
-      position: "relative",
-      width: 500,
-      padding: 20,
-      borderRadius: 5,
-      border: "7px solid #000"
-    };  
-    var names = ["Example"];
+var TodoItems = React.createClass({
+  render: function() {
+    var todoEntries = this.props.entries;
+
+    function createTasks(item) {
+      return <li key={item.key}>{item.text}</li>
+    }    
+
+    var listItems = todoEntries.map(createTasks);
+
     return (
-      <div style={containerStyle}>
-      <Title />
-      <Form names={names}/>
-      </div>
-    )
+      <ul className="list">
+        {listItems}
+      </ul>
+    );
   }
 });
 
-ReactDOM.render(<TodoContainer />, document.getElementById('app'));
+
+ReactDOM.render(<TodoList />, document.getElementById('app'));

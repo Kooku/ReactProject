@@ -54,115 +54,84 @@
 	var React = __webpack_require__(2);
 	var ReactDOM = __webpack_require__(33);
 
-	var AddNew = React.createClass({
-	  displayName: 'AddNew',
+	var TodoList = React.createClass({
+	  displayName: 'TodoList',
 
-	  render: function () {
-	    var addNewStyle = {
-	      position: "relative",
-	      marginBottom: 15
+	  getInitialState: function () {
+	    return {
+	      items: []
 	    };
-	    var buttonStyle = {
-	      display: "inline-block",
-	      marginRight: 10
-	    };
-	    var textStyle = {
-	      display: "inline-block"
-	    };
-	    return React.createElement(
-	      'div',
-	      { style: addNewStyle },
-	      React.createElement('input', { type: 'button', style: buttonStyle, value: 'Add New' }),
-	      React.createElement('input', { className: 'newTask', type: 'text', style: textStyle, onClick: this.props.newTask })
-	    );
-	  }
-	});
+	  },
 
-	var Item = React.createClass({
-	  displayName: 'Item',
+	  addItem: function (e) {
+	    var itemArray = this.state.items;
 
-	  render: function () {
-	    var itemStyle = {
-	      color: "#f56262",
-	      fontSize: 16,
-	      position: "relative",
-	      marginTop: 10
-	    };
-	    return React.createElement(
-	      'div',
-	      { style: itemStyle },
-	      this.props.name
-	    );
-	  }
-	});
-
-	var Title = React.createClass({
-	  displayName: 'Title',
-
-	  render: function () {
-	    var titleStyle = {
-	      position: "relative",
-	      padding: "20px 15px",
-	      color: "#333",
-	      fontSize: 32,
-	      fontWeight: "bold",
-	      fontFamily: "Helvetica, Arial, sans-serif"
-	    };
-	    return React.createElement(
-	      'div',
-	      { style: titleStyle },
-	      ' To Do List '
-	    );
-	  }
-	});
-
-	var Form = React.createClass({
-	  displayName: 'Form',
-
-	  render: function () {
-	    var nameList = this.props.names.map(function (name) {
-	      return React.createElement(Item, { name: name });
+	    itemArray.push({
+	      text: this._inputElement.value,
+	      key: Date.now()
 	    });
-	    var formStyle = {
-	      position: "relative",
-	      padding: "15px 20px 20px 20px",
-	      border: "5px solid #90de96",
-	      borderRadius: 5
-	    };
-	    return React.createElement(
-	      'div',
-	      { style: formStyle },
-	      React.createElement(AddNew, { newTask: this.props.newTask }),
-	      nameList
-	    );
-	  }
-	});
 
-	var TodoContainer = React.createClass({
-	  displayName: 'TodoContainer',
+	    this.setState({
+	      items: itemArray
+	    });
 
-	  newTask: function () {},
+	    this._inputElement.value = "";
+	    e.preventDefault();
+	  },
+
+	  remove: function () {
+	    console.log("removing");
+	  },
 
 	  render: function () {
-	    var containerStyle = {
-	      margin: "auto",
-	      position: "relative",
-	      width: 500,
-	      padding: 20,
-	      borderRadius: 5,
-	      border: "7px solid #000"
-	    };
-	    var names = ["Example"];
 	    return React.createElement(
 	      'div',
-	      { style: containerStyle },
-	      React.createElement(Title, null),
-	      React.createElement(Form, { names: names, newTask: newTask })
+	      { className: 'todoListMain' },
+	      React.createElement(
+	        'div',
+	        { className: 'title' },
+	        React.createElement(
+	          'form',
+	          { onSubmit: this.addItem },
+	          React.createElement('input', { ref: a => this._inputElement = a,
+	            placeholder: 'Enter task' }),
+	          React.createElement(
+	            'button',
+	            { type: 'submit' },
+	            'add'
+	          )
+	        )
+	      ),
+	      React.createElement(TodoItems, { entries: this.state.items })
 	    );
 	  }
 	});
 
-	ReactDOM.render(React.createElement(TodoContainer, null), document.getElementById('app'));
+	var TodoItems = React.createClass({
+	  displayName: 'TodoItems',
+
+	  render: function () {
+	    var todoEntries = this.props.entries;
+
+	    function createTasks(item) {
+	      return React.createElement(
+	        'li',
+	        { key: item.key },
+	        item.text
+	      );
+	    }
+
+	    var listItems = todoEntries.map(createTasks);
+
+	    return React.createElement(
+	      'ul',
+	      { className: 'list' },
+	      listItems
+	    );
+	  }
+	});
+
+	ReactDOM.render(React.createElement(TodoList, null), document.getElementById('app'));
 
 /***/ },
 /* 2 */
